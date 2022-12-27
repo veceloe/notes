@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Вход</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito&display=swap" rel="stylesheet">
+</head>
+<style>
+    body {
+        padding: 7% 0 0 0;
+        font-family: 'Nunito', sans-serif;
+        background-color: #ffffff;
+    }
+
+    form {
+        width: 300px;
+        margin: 0 auto;
+        text-align: center;
+        padding: 30px;
+        border-radius: 50px;
+        background: #ffffff;
+        box-shadow:  20px 20px 60px #d9d9d9,
+        -20px -20px 60px #ffffff;
+    }
+
+    input[type="email"], input[type="password"] {
+        font-family: 'Nunito', sans-serif;
+        border: none;
+        outline: none;
+        resize: none;
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border-radius: 10px;
+        background: #ffffff;
+        box-shadow: inset 20px 20px 60px #d9d9d9,
+        inset -20px -20px 60px #ffffff;
+    }
+
+    /* Style the submit button */
+    input[type="submit"] {
+        font-family: 'Nunito', sans-serif;
+        font-weight: bolder;
+        font-size: large;
+        transition: ease-out 0.5s;
+        width: 100%;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border-radius: 25px;
+        cursor: pointer;
+        border: none;
+        background: #ffffff;
+        box-shadow: inset 20px 20px 60px #d9d9d9,
+        inset -20px -20px 60px #ffffff;
+    }
+
+    input[type="submit"]:hover {
+        background-color: lightgreen;
+    }
+
+    .error {
+        color: red;
+        font-size: 12px;
+    }
+
+    a{
+        text-decoration: none;
+        color: black;
+    }
+    .logout{
+        color: lightgreen;
+    }
+
+</style>
+<body>
+<!--<form th:action="@{/login}" method="post">
+    <div th:if="${param.error}" class="error">
+        Неккоректное имя пользователя или пароль.
+    </div>
+    <div th:if="${param.logout}" class="logout">
+        Вы успешно вышли из аккаунта.
+    </div>
+    <div th:if="${param.registration}" class="error">
+        Вы успешно зарегистрировались! Войдите в ваш аккаунт1.
+    </div>
+    <div><label> <input type="text" name="username" placeholder="Имя пользователя"/> </label></div>
+    <div><label> <input type="password" name="password" placeholder="Пароль"/> </label></div>
+    <div><input type="submit" value="Вход"/></div>
+    <a th:href="@{registration}">Нет аккаунта? Зарегитсрироваться.</a>
+</form>-->
+<form
+        method="post"
+        role="form"
+        th:action="@{/login}"
+>
+    <div th:if="${param.error}" class="error">
+        Неккоректное имя пользователя или пароль.
+    </div>
+    <div th:if="${param.logout}" class="logout">
+        Вы успешно вышли из аккаунта.
+    </div>
+    <div th:if="${param.registration}" class="error">
+        Вы успешно зарегистрировались! Войдите в ваш аккаунт1.
+    </div>
+    <input
+            type="email"
+            name="username"
+            placeholder="Электронная почта"
+    />
+    <input
+            type="password"
+            name="password"
+            placeholder="Пароль"
+    />
+    <input type="submit" value="Войти">
+    <span>Не зарегистрированы?
+        <a th:href="@{/registration}" style="font-weight: bold">Зарегистрироваться</a>
+    </span>
+</form>
+</body>
+</html>

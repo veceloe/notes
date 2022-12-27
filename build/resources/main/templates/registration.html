@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Регистрация</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito&display=swap" rel="stylesheet">
+</head>
+<style>
+    body {
+        padding: 7% 0 0 0;
+        font-family: 'Nunito', sans-serif;
+        background-color: #ffffff;
+    }
+
+    form {
+        width: 300px;
+        margin: 0 auto;
+        text-align: center;
+        padding: 30px;
+        border-radius: 50px;
+        background: #ffffff;
+        box-shadow:  20px 20px 60px #d9d9d9,
+        -20px -20px 60px #ffffff;
+    }
+
+    input[type="text"], input[type="password"], input[type="email"] {
+        font-family: 'Nunito', sans-serif;
+        border: none;
+        outline: none;
+        resize: none;
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border-radius: 10px;
+        background: #ffffff;
+        box-shadow: inset 20px 20px 60px #d9d9d9,
+        inset -20px -20px 60px #ffffff;
+    }
+
+    input[type="submit"] {
+        font-family: 'Nunito', sans-serif;
+        font-weight: bolder;
+        font-size: large;
+        transition: ease-out 0.5s;
+        width: 100%;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border-radius: 25px;
+        cursor: pointer;
+        border: none;
+        background: #ffffff;
+        box-shadow: inset 20px 20px 60px #d9d9d9,
+        inset -20px -20px 60px #ffffff;
+    }
+
+    input[type="submit"]:hover {
+        background-color: lightgreen;
+    }
+
+    .error {
+        color: red;
+        font-size: 12px;
+    }
+
+    a{
+        text-decoration: none;
+        color: black;
+    }
+
+</style>
+<body>
+<!--<form th:action="@{/registration}" method="post">
+    <div><input type="text" name="username" placeholder="Создате имя пользователя"/></div>
+    <div><input type="email" name="email" placeholder="Электронная почта"/></div>
+    <div><input type="password" name="password" placeholder="Придумайте пароль (от 6 до 18 символов)"/></div>
+    <div><input type="submit" value="Зарегистрироваться"/></div>
+</form>-->
+<form
+        method="post"
+        role="form"
+        th:action="@{/registration/save}"
+        th:object="${user}"
+>
+
+    <input
+            name="firstName"
+            placeholder="Имя"
+            th:field="*{firstName}"
+            type="text"
+    />
+    <p th:errors = "*{firstName}" class="error"
+       th:if="${#fields.hasErrors('firstName')}">Введите корректное имя.</p>
+    <input
+            name="lastName"
+            placeholder="Фамилия"
+            th:field="*{lastName}"
+            type="text"
+    />
+    <p th:errors = "*{lastName}" class="error"
+       th:if="${#fields.hasErrors('lastName')}">Введите корректную фамилию.</p>
+    <input
+            name="email"
+            placeholder="Электронная почта"
+            th:field="*{email}"
+            type="email"
+    />
+    <p th:errors = "*{email}" class="error"
+       th:if="${#fields.hasErrors('email')}">Введите корректный e-mail.</p>
+    <input
+            name="password"
+            placeholder="Пароль (от 6 до 16 символов)"
+            th:field="*{password}"
+            type="password"
+    />
+    <p th:errors = "*{password}" class="error"
+       th:if="${#fields.hasErrors('password')}">Введите корректный пароль.</p>
+    <input
+            name="passwordConfirm"
+            placeholder="Пароль (от 6 до 16 символов)"
+            type="password"
+            th:field="*{passwordConfirm}"
+    />
+    <p th:errors = "*{passwordsEquals}" class="error"
+       th:if="${#fields.hasErrors('passwordsEquals')}">Введите совпадающие пароли.</p>
+    <input type="submit" value="Зарегистрироваться">
+    <span>Уже зарегистрированы?<a th:href="@{/login}" style="font-weight: bold">Войдите</a></span>
+</form>
+</body>
+</html>

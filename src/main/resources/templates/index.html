@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Notes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito&display=swap" rel="stylesheet">
+</head>
+<body>
+<h1 style="text-align: center" id="appName">Заметки</h1>
+<form th:action="@{/logout}" method="post">
+    <input class="Account" type="submit" th:href="@{login}" value="Сменить пользователя">
+</form>
+<div id="notes">
+<div id="noteBlock" class="noteBlock">
+    <textarea placeholder="Введите заголовок" id="noteTitle" class="noteTitle" rows="1" oninput="auto_height(this)" onload="auto_height(this)"></textarea>
+    <button id="closeButton" class="closeNote"></button>
+    <textarea placeholder="Введите текст" id="noteContent" class="noteContent" rows="1" oninput="auto_height(this)" onload="auto_height(this)" onkeypress="process(event, this)"></textarea>
+    <button id="sendButton" class="sendNote">Добавить заметку</button>
+</div>
+</div>
+</body>
+<style>
+    textarea {
+        border: none;
+        overflow: hidden;
+        outline: none;
+
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+
+        resize: none;
+    }
+    #notes{
+        padding-inline: 1%;
+        margin: auto;
+        position: center;
+    }
+
+    textarea:focus, input:focus{
+        outline: none;
+    }
+    ::placeholder {
+        color: black;
+    }
+    body{
+        font-family: 'Nunito';
+        background: #ffffff;
+    }
+    #appName{
+        font-weight: bolder;
+        color: rgba(27, 28, 28, 0.99);
+    }
+    .noteBlock{
+        margin: 1%;
+        width: fit-content;
+        border-radius: 26px;
+        background: #ffffff;
+        box-shadow:  20px 20px 60px #d9d9d9,
+        -20px -20px 60px #ffffff;
+        display: inline-block;
+        padding: 1%;
+        position: relative;
+    }
+
+    .noteTitle{
+        padding-left:5%;
+        width: 83%;
+        background: transparent;
+        border: none;
+        display: block;
+        font-size: 16pt;
+        font-family: 'Nunito';
+        font-weight: bolder;
+    }
+    .noteContent{
+        padding-left: 5%;
+        background: transparent;
+        border: none;
+        display: block;
+        font-size: 14pt;
+        font-family: 'Nunito';
+    }
+
+    .sendNote{
+        font-family: 'Nunito';
+        padding-left:5%;
+        background: transparent;
+        border: none;
+        display: block;
+        font-size: 14pt;
+        cursor: pointer;
+    }
+    .closeNote{
+        font-family: 'Nunito';
+        position: absolute;
+        padding: 5%;
+        top: 5%;
+        right: 3%;
+        z-index: 1;
+        border: none;
+        font-size: 16pt;
+        cursor: pointer;
+        border-radius: 100%;
+        background: #ffffff;
+        box-shadow: inset 4px 4px 8px #d9d9d9,
+        inset -4px -4px 8px #ffffff;
+    }
+</style>
+<script>
+    const url = 'http://localhost:8080/notes';
+    async function getData() {
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            let array = data.map(item => ({
+                id: item.id,
+                title: item.title,
+                content: item.content
+            }));
+            return array;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    var block = document.getElementById("noteBlock");
+    async function updateNotes() {
+        let notes = await getData();
+        notes.forEach(note => {
+            if (document.getElementById(`noteBlock${note.id}`)===null) {
+                var newBlock = block.cloneNode(true);
+                newBlock.id = `noteBlock${note.id}`;
+                newBlock.children[0].id=`noteTitle${note.id}`;
+                newBlock.childNodes.item(1).textContent = note.title;
+                newBlock.children[1].id=`closeButton${note.id}`;
+                newBlock.children[2].id=`noteContent${note.id}`;
+                newBlock.childNodes.item(5).textContent = note.content;
+                newBlock.children[3].id=`sendButton${note.id}`;
+                newBlock.children[3].textContent="Редактировать";
+                block.before(newBlock);
+            }
+        });
+    }
+
+    updateNotes();
+
+    function auto_height(textarea) {
+        textarea.addEventListener("keyup", e =>{
+            textarea.style.height = "63px";
+            let scHeight = e.target.scrollHeight;
+            textarea.style.height = `${scHeight}px`;
+        });
+    }
+
+    async function process(e, elem) {
+        const code = (e.keyCode ? e.keyCode : e.which);
+        let id;
+        if (code === 13) {
+            // id = elem.id.replace("sendButton", "");
+            let noteTitle = document.getElementById('noteTitle').value;
+            let noteContent = document.getElementById('noteContent').value;
+            let data = {
+                title: noteTitle,
+                content: noteContent
+            };
+            await fetch(url, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(data)
+            });
+        }
+    }
+
+    document.addEventListener("click", async function (event) {
+        let id;
+        if (event.target.matches("button[id^='sendButton']")) {
+            id = event.target.id.replace("sendButton", "");
+            let noteTitle = document.getElementById(`noteTitle${id}`).value;
+            let noteContent = document.getElementById(`noteContent${id}`).value;
+            let data = {
+                title: noteTitle,
+                content: noteContent
+            };
+            if (id!=""){
+                console.log(`PUT ${id}`);
+                await fetch(`http://localhost:8080/notes/${id}`, {
+                    method: "PUT",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(data)
+                });
+            } else {
+                if (noteContent != '' && noteTitle != '') {
+                    await fetch('http://localhost:8080/notes', {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify(data)
+                    });
+                    await updateNotes();
+                    document.getElementById(`noteTitle${id}`).value = '';
+                    document.getElementById(`noteContent${id}`).value = '';
+                }
+            }
+        }
+        if (event.target.matches("button[id^='closeButton']")) {
+            id = event.target.id.replace("closeButton", "");
+            const deleted = document.getElementById(`noteBlock${id}`);
+            if (id!="") await deleted.remove();
+            await fetch(`http://localhost:8080/notes/${id}`, {
+                method: "DELETE",
+                headers: {"Content-Type": "application/json"}
+            });
+        }
+        await updateNotes();
+    });
+
+</script>
+
+</html>
